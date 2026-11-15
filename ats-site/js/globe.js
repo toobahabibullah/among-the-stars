@@ -9,6 +9,7 @@
   var D = window.ArtifactData;
   var S = window.StatusData;
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var MARKER_COLOR = "#3DE0FF";
 
   var BODIES = {
     moon: {
@@ -61,12 +62,6 @@
     });
   }
   function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
-  function hexRgba(hex, a) {
-    var h = String(hex).replace("#", "");
-    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
-    var n = parseInt(h, 16);
-    return "rgba(" + ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")";
-  }
   function activeArtifacts() {
     return state.all.filter(function (a) { return a.destination === cap(state.body); });
   }
@@ -132,7 +127,8 @@
   var fade = { active: false, start: 0, dur: 750 };
   var mapPending = false;
   var dotRadius = 0.36;
-  var pointShapeResolutions = {};
+  var markerOverlay = null;
+  var markerData = [];
 
   function findSpinGroup() {
     if (!state.globe) return null;
@@ -161,6 +157,7 @@
   function maintain(now) {
     if (!state.globe) return;
     applySceneSetup();
+    updateMarkerGlows();
     if (fade.active) {
       var mat = state.globe.globeMaterial();
       var t = Math.min((now - fade.start) / fade.dur, 1);
@@ -362,15 +359,11 @@
   function updatePoints() {
     if (!state.globe) return;
     var data = siteDots();
-    pointShapeResolutions = {};
-    data.forEach(function (d) {
-      pointShapeResolutions[d.lat + "," + d.lon] = S.shapeResolution(S.shapeOf(d.a.status));
-    });
     state.globe
       .pointsData(data)
       .pointLat(function (d) { return d.lat; })
       .pointLng(function (d) { return d.lon; })
-      .pointColor(function (d) { return S.colourOf(d.a.status); })
+      .pointColor(MARKER_COLOR)
       .pointAltitude(0.012)
       .pointRadius(dotRadius)
       .pointResolution(24)
@@ -384,55 +377,95 @@
         if (performance.now() - state.lastPointClickAt < 160) return;
         if (window.Exhibit.isOpen()) window.Exhibit.close();
       });
-    updateRings();
+    markerData = data;
+    renderMarkerOverlay();
+    updateMarkerGlowSelection();
   }
 
-  function updateRings() {
-    if (!state.globe) return;
-    if (reduceMotion) { state.globe.ringsData([]); return; }
-    var data = siteDots().map(function (d) {
-      d.selected = !!(state.currentSite && state.currentSite.lat === d.lat && state.currentSite.lon === d.lon);
-      return d;
+  function renderMarkerOverlay() {
+    if (!markerOverlay) {
+      markerOverlay = document.createElement("div");
+      markerOverlay.className = "globe-marker-overlay";
+      markerOverlay.setAttribute("aria-hidden", "true");
+      el["globe-viz"].appendChild(markerOverlay);
+    }
+    markerOverlay.innerHTML = "";
+    markerData.forEach(function (d) {
+      var marker = document.createElement("span");
+      marker.className = "globe-marker-glow";
+      d.markerElement = marker;
+      markerOverlay.appendChild(marker);
     });
-    state.globe
-      .ringsData(data)
-      .ringLat(function (d) { return d.lat; })
-      .ringLng(function (d) { return d.lon; })
-      .ringColor(function (d) { return hexRgba(d.selected ? "#3DE0FF" : S.colourOf(d.a.status), d.selected ? 0.7 : 0.5); })
-      .ringMaxRadius(function (d) { return d.selected ? 2 : 0.85; })
-      .ringPropagationSpeed(1.1)
-      .ringRepeatPeriod(2000);
   }
 
-  /* Match the marker's polygon geometry to its status shape and keep its colour
-     emissive so it remains visible on both the day and night sides. */
+  function updateMarkerGlows() {
+    if (!markerOverlay || !markerData.length) return;
+    var controls = state.globe.controls();
+    var camera = controls.object;
+    var cameraPosition = camera.position.clone();
+    camera.getWorldPosition(cameraPosition);
+    var target = controls.target;
+    var width = markerOverlay.clientWidth;
+    var height = markerOverlay.clientHeight;
+
+    markerData.forEach(function (d) {
+      var marker = d.markerElement;
+      var point = d.__threeObj;
+      if (!marker || !point) return;
+      var worldPosition = point.position.clone();
+      point.getWorldPosition(worldPosition);
+      var projected = worldPosition.clone().project(camera);
+      var normal = worldPosition.clone().sub(target);
+      var toCamera = cameraPosition.clone().sub(worldPosition);
+      var visible = normal.dot(toCamera) > 0 &&
+        projected.z >= -1 && projected.z <= 1 &&
+        projected.x >= -1 && projected.x <= 1 &&
+        projected.y >= -1 && projected.y <= 1;
+      marker.style.display = visible ? "block" : "none";
+      if (!visible) return;
+      var x = (projected.x + 1) * width / 2;
+      var y = (1 - projected.y) * height / 2;
+      marker.style.transform = "translate(-50%, -50%) translate(" + x + "px, " + y + "px)";
+      marker.style.zIndex = String(Math.round((1 - projected.z) * 1000));
+    });
+  }
+
+  /* Keep the circular cyan markers self-lit on both the day and night sides. */
   function restylePoints() {
     if (!spin.group) return;
     spin.group.traverse(function (o) {
       if (o.isMesh && o.geometry && o.geometry.type === "CylinderGeometry" &&
           o.material && o.material.emissive) {
-        var target = o.__currentTargetD;
-        var resolution = target && pointShapeResolutions[target.lat + "," + target.lng] || 24;
-        if (o.__atsPointResolution !== resolution) {
+        if (o.__atsPointResolution !== 24) {
           var Geometry = o.geometry.constructor;
           var Matrix = o.matrix.constructor;
-          var geometry = new Geometry(1, 1, 1, resolution);
+          var geometry = new Geometry(1, 1, 1, 24);
           geometry.applyMatrix4(new Matrix().makeRotationX(Math.PI / 2));
           geometry.applyMatrix4(new Matrix().makeTranslation(0, 0, -0.5));
           if (o.__atsOwnGeometry) o.geometry.dispose();
           o.geometry = geometry;
           o.__atsOwnGeometry = true;
-          o.__atsPointResolution = resolution;
+          o.__atsPointResolution = 24;
         }
         o.material.emissive.copy(o.material.color);
-        o.material.emissiveIntensity = 1.15;
+        o.material.emissiveIntensity = 1.5;
       }
     });
   }
 
-  /* A status-coloured pulse surrounds each site; the selected site uses cyan. */
+  function updateMarkerGlowSelection() {
+    if (!markerOverlay) return;
+    var selected = state.currentSite;
+    Array.prototype.forEach.call(markerOverlay.children, function (marker, i) {
+      var site = markerData[i];
+      var isSelected = selected && site &&
+        selected.lat === site.lat && selected.lon === site.lon;
+      marker.classList.toggle("is-selected", !!isSelected);
+    });
+  }
+
   function updateSelectionRing() {
-    updateRings();
+    updateMarkerGlowSelection();
   }
 
   function flyTo(pov, ms) { if (state.globe) state.globe.pointOfView(pov, reduceMotion ? 0 : ms); }
@@ -564,7 +597,7 @@
     var html = rows.join("");
     el["legend"].innerHTML = '<h3>Mission status</h3><div class="legend-items">' +
       (html || '<span class="legend-empty">No machines on this world yet.</span>') + "</div>" +
-      '<p class="legend-hint">Dot shape shows the status group.</p>';
+      '<p class="legend-hint">Glowing cyan dots mark each location.</p>';
     el["legend-mobile"].innerHTML = html;
   }
 
