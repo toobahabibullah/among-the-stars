@@ -408,7 +408,7 @@
     if (!activeSite) activeSite = D.drawableSites(a)[0] || null;
     if (siteList.length) markSiteButtons();
 
-    proseSection(refs["sec-story"], refs["ex-story"], a.story);
+    proseSection(refs["sec-story"], refs["ex-story"], D.present(a.story) ? a.story : a.mission_context);
     proseSection(refs["sec-how"], refs["ex-how"], a.how_it_worked);
     renderInstruments(a);
     listSection(refs["sec-discoveries"], refs["ex-discoveries"], a.discoveries,
@@ -447,7 +447,7 @@
     ensure();
     opts = o || {};
     current = a;
-    lastFocus = opts.trigger || document.activeElement;
+    if (!isOpen) lastFocus = opts.trigger || document.activeElement;
     fill(a);
     refs["ex-back-label"].textContent = opts.backLabel || "Back";
     isOpen = true;

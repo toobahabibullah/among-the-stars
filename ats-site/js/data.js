@@ -69,7 +69,7 @@
 
   /* Bump the version whenever the JSON content changes so no browser or
      service worker can serve a cached copy of an older data file. */
-  var DATA_VERSION = "4";
+  var DATA_VERSION = "5";
 
   /* Records are prepared in phases. Phase 2 records are written and checked in
      the data file but stay hidden from the site until the team publishes them;

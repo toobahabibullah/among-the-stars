@@ -24,8 +24,8 @@ window.ARTIFACTS_MIRROR = {
           "coord_source": "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1969-059C"
         }
       ],
-      "status": "TODO",
-      "status_detail": "TODO",
+      "status": "Intentionally Left Behind",
+      "status_detail": "The descent stage remained at Tranquility Base after the ascent stage lifted off with the crew.",
       "status_source": "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1969-059C",
       "landing": "TODO",
       "story": "TODO",
@@ -129,8 +129,8 @@ window.ARTIFACTS_MIRROR = {
           "coord_source": "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1972-096C"
         }
       ],
-      "status": "TODO",
-      "status_detail": "TODO",
+      "status": "Intentionally Left Behind",
+      "status_detail": "The three Apollo rovers were left at their landing sites when each crew returned to orbit.",
       "status_source": "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1971-063C",
       "landing": "TODO",
       "story": "TODO",
@@ -253,8 +253,8 @@ window.ARTIFACTS_MIRROR = {
           "coord_source": "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1972-096C"
         }
       ],
-      "status": "TODO",
-      "status_detail": "TODO",
+      "status": "Mission Completed",
+      "status_detail": "NASA ended the Apollo surface-experiments program in 1977 after the stations had returned years of lunar science data.",
       "status_source": "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1969-099C",
       "landing": "TODO",
       "story": "TODO",
@@ -366,8 +366,8 @@ window.ARTIFACTS_MIRROR = {
           "coord_source": "https://science.nasa.gov/mission/mer-opportunity/"
         }
       ],
-      "status": "TODO",
-      "status_detail": "TODO",
+      "status": "Lost Contact",
+      "status_detail": "Opportunity stopped responding during a planet-wide dust storm in 2018; NASA ended the mission in February 2019.",
       "status_source": "https://science.nasa.gov/mission/mars-exploration-rovers-spirit-and-opportunity/",
       "landing": "TODO",
       "story": "TODO",
@@ -479,8 +479,8 @@ window.ARTIFACTS_MIRROR = {
           "coord_source": "https://science.nasa.gov/mission/mer-spirit/"
         }
       ],
-      "status": "TODO",
-      "status_detail": "TODO",
+      "status": "Stopped Working",
+      "status_detail": "Spirit became stuck and stopped communicating in 2010; NASA ended recovery efforts in May 2011.",
       "status_source": "https://science.nasa.gov/mission/mars-exploration-rovers-spirit-and-opportunity/",
       "landing": "TODO",
       "story": "TODO",
@@ -592,8 +592,8 @@ window.ARTIFACTS_MIRROR = {
           "coord_source": "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1996-068A"
         }
       ],
-      "status": "TODO",
-      "status_detail": "TODO",
+      "status": "Mission Completed",
+      "status_detail": "The rover operated for 83 sols, far beyond its planned seven-sol mission, before contact with Pathfinder was lost.",
       "status_source": "https://science.nasa.gov/mission/mars-pathfinder/",
       "landing": "TODO",
       "story": "TODO",
@@ -671,8 +671,8 @@ window.ARTIFACTS_MIRROR = {
       "lon": null,
       "coord_source": "TODO",
       "sites": [],
-      "status": "TODO",
-      "status_detail": "TODO",
+      "status": "Lost Contact",
+      "status_detail": "The last signal from Pioneer 10 reached Earth in January 2003; the spacecraft could no longer be contacted.",
       "status_source": "https://science.nasa.gov/mission/pioneer-10/",
       "landing": "TODO",
       "story": "TODO",
@@ -773,8 +773,8 @@ window.ARTIFACTS_MIRROR = {
       "lon": null,
       "coord_source": "TODO",
       "sites": [],
-      "status": "TODO",
-      "status_detail": "TODO",
+      "status": "Mission Completed",
+      "status_detail": "Kepler's science mission ended in 2018 after it ran out of fuel, and the spacecraft was shut down.",
       "status_source": "https://science.nasa.gov/mission/kepler/",
       "landing": "TODO",
       "story": "TODO",
@@ -938,8 +938,8 @@ window.ARTIFACTS_MIRROR = {
           "coord_source": "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1975-075C"
         }
       ],
-      "status": "TODO",
-      "status_detail": "TODO",
+      "status": "Lost Contact",
+      "status_detail": "Viking 1's last communication arrived in November 1982, after more than six years of surface operations.",
       "status_source": "https://science.nasa.gov/mission/viking-1/",
       "landing": "TODO",
       "story": "TODO",
@@ -1018,7 +1018,7 @@ window.ARTIFACTS_MIRROR = {
         "https://science.nasa.gov/mission/viking-1/",
         "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1975-075C"
       ],
-      "phase": 2,
+      "phase": 1,
       "verified": false
     },
     {
@@ -1139,8 +1139,8 @@ window.ARTIFACTS_MIRROR = {
           "coord_source": "https://science.nasa.gov/mission/insight/"
         }
       ],
-      "status": "TODO",
-      "status_detail": "TODO",
+      "status": "Stopped Working",
+      "status_detail": "Dust-covered solar panels could no longer provide enough power; NASA declared the mission over in December 2022.",
       "status_source": "https://science.nasa.gov/mission/insight/",
       "landing": "TODO",
       "story": "TODO",
@@ -1228,7 +1228,7 @@ window.ARTIFACTS_MIRROR = {
         "https://science.nasa.gov/mission/insight/",
         "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2018-042A"
       ],
-      "phase": 2,
+      "phase": 1,
       "verified": false
     },
     {
@@ -1675,6 +1675,176 @@ window.ARTIFACTS_MIRROR = {
         "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1973-019A"
       ],
       "phase": 2,
+      "verified": false
+    },
+    {
+      "id": "surveyor7",
+      "name": "Surveyor 7",
+      "destination": "Moon",
+      "mission": "Surveyor",
+      "type": "lander",
+      "location": "TODO",
+      "lat": null,
+      "lon": null,
+      "coord_source": "TODO",
+      "sites": [
+        {
+          "label": "Tycho highlands (Surveyor 7 landing site)",
+          "lat": -40.9812,
+          "lon": -11.5127,
+          "coord_system": "Selenographic latitude and east-positive longitude, from the NSSDCA record",
+          "coord_source": "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1968-001A"
+        }
+      ],
+      "status": "Mission Completed",
+      "status_detail": "Surveyor 7 completed its lunar science objectives and returned data during two lunar days before operations ended in February 1968.",
+      "status_source": "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1968-001A",
+      "landing": "10 January 1968, 01:05:36 UT",
+      "story": "TODO",
+      "how_it_worked": "TODO",
+      "discoveries": [
+        "TODO"
+      ],
+      "timeline": [
+        "TODO"
+      ],
+      "status_text": "TODO",
+      "quick_facts": {
+        "launch_date": "7 January 1968, 06:30 UT",
+        "landing_date": "10 January 1968, 01:05:36 UT",
+        "mass": "306 kg at landing",
+        "size": "Tripod lander, about 3 m tall",
+        "power_source": "Solar cells and silver-zinc batteries",
+        "designed_lifetime": "TODO",
+        "actual_lifetime": "Operations ended 21 February 1968",
+        "last_contact": "TODO"
+      },
+      "instruments": [],
+      "key_numbers": [],
+      "did_you_know": [],
+      "mission_context": "Surveyor 7 landed in the lunar highlands near Tycho crater, returned more than 21,000 pictures, and used its sampler to study the soil and rocks.",
+      "related": [],
+      "image_file": "assets/images/surveyor7.jpg",
+      "image_credit": "NASA",
+      "image_source_url": "https://science.nasa.gov/mission/surveyor-7/",
+      "image_alt": "A Surveyor lander spacecraft stands in a test facility, its white dish antenna and instrument boxes mounted above three landing legs.",
+      "sources": [
+        "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1968-001A"
+      ],
+      "phase": 1,
+      "verified": false
+    },
+    {
+      "id": "curiosity_descent_stage",
+      "name": "Curiosity descent stage",
+      "destination": "Mars",
+      "mission": "Mars Science Laboratory",
+      "not_to_confuse_with": "Curiosity rover (separate machine)",
+      "type": "descent stage",
+      "location": "TODO",
+      "lat": null,
+      "lon": null,
+      "coord_source": "TODO",
+      "sites": [
+        {
+          "label": "Gale Crater (Curiosity landing region; stage impact site not separately mapped)",
+          "lat": -4.59,
+          "lon": 137.44,
+          "coord_system": "Approximate rover landing coordinates; the descent stage impact location is not separately verified",
+          "coord_source": "https://science.nasa.gov/mission/msl-curiosity/"
+        }
+      ],
+      "status": "Deliberate Impact",
+      "status_detail": "After lowering Curiosity onto Mars, the descent stage flew away and intentionally impacted the surface at a safe distance.",
+      "status_source": "https://science.nasa.gov/mission/msl-curiosity/",
+      "landing": "6 August 2012",
+      "story": "TODO",
+      "how_it_worked": "TODO",
+      "discoveries": [
+        "TODO"
+      ],
+      "timeline": [
+        "TODO"
+      ],
+      "status_text": "TODO",
+      "quick_facts": {
+        "launch_date": "26 November 2011",
+        "landing_date": "6 August 2012",
+        "mass": "TODO",
+        "size": "TODO",
+        "power_source": "TODO",
+        "designed_lifetime": "TODO",
+        "actual_lifetime": "TODO",
+        "last_contact": "TODO"
+      },
+      "instruments": [],
+      "key_numbers": [],
+      "did_you_know": [],
+      "mission_context": "The powered descent stage used the sky-crane maneuver to lower Curiosity to Gale Crater, then flew away and crashed so it would not land near the rover.",
+      "related": [],
+      "image_file": "assets/images/curiosity_descent_stage.jpg",
+      "image_credit": "NASA/JPL-Caltech",
+      "image_source_url": "https://science.nasa.gov/resource/curiositys-sky-crane-maneuver-artists-concept/",
+      "image_alt": "Artist's concept: Curiosity's descent stage fires its rocket engines as it lowers the rover toward the Martian surface on tethers during the sky crane maneuver.",
+      "sources": [
+        "https://science.nasa.gov/mission/msl-curiosity/"
+      ],
+      "phase": 1,
+      "verified": false
+    },
+    {
+      "id": "perseverance",
+      "name": "Perseverance rover",
+      "destination": "Mars",
+      "mission": "Mars 2020",
+      "type": "rover",
+      "location": "Jezero Crater",
+      "lat": null,
+      "lon": null,
+      "coord_source": "TODO",
+      "sites": [
+        {
+          "label": "Jezero Crater",
+          "lat": 18.4447,
+          "lon": 77.4508,
+          "coord_system": "Approximate rover landing coordinates; east-positive longitude",
+          "coord_source": "https://science.nasa.gov/mission/mars-2020-perseverance/"
+        }
+      ],
+      "status": "Still Operational",
+      "status_detail": "Perseverance remains active in Jezero Crater, studying Martian rocks and collecting samples.",
+      "status_source": "https://science.nasa.gov/mission/mars-2020-perseverance/",
+      "landing": "18 February 2021",
+      "story": "TODO",
+      "how_it_worked": "TODO",
+      "discoveries": [
+        "It is collecting and caching rock and soil samples for possible return to Earth."
+      ],
+      "timeline": [],
+      "status_text": "TODO",
+      "quick_facts": {
+        "launch_date": "30 July 2020",
+        "landing_date": "18 February 2021",
+        "mass": "About 1,025 kg",
+        "size": "About 3 m long",
+        "power_source": "Multi-Mission Radioisotope Thermoelectric Generator",
+        "designed_lifetime": "At least one Mars year",
+        "actual_lifetime": "Active",
+        "last_contact": "Active"
+      },
+      "instruments": [],
+      "key_numbers": [],
+      "did_you_know": [],
+      "mission_context": "Perseverance searches for signs of ancient microbial life, studies Jezero Crater's geology and climate, and caches samples for possible return to Earth.",
+      "related": [
+        "insight",
+        "curiosity_descent_stage"
+      ],
+      "sources": [
+        "https://science.nasa.gov/mission/mars-2020-perseverance/",
+        "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=2020-052A"
+      ],
+      "phase": 1,
       "verified": false
     }
   ]

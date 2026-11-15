@@ -23,7 +23,18 @@
   height: 100%;
   overflow-y: auto;
   padding: 28px 28px 40px;
+  overscroll-behavior: contain;
 }
+
+body.globe-page .exhibit-panel {
+  top: calc(var(--header-h) + 72px);
+  bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: calc(100dvh - var(--header-h) - 84px);
+}
+body.globe-page .exhibit-scroll { flex: 1 1 auto; min-height: 0; height: auto; }
 
 .exhibit-head { position: relative; margin-bottom: 18px; padding-right: 44px; }
 .exhibit-kicker {
@@ -456,6 +467,21 @@
   }
   .exhibit-head h2 { font-size: 14px; }
   .quick-facts td { font-size: 11.5px; }
+}
+
+@media (max-width: 767px) {
+  body.globe-page .exhibit-panel {
+    top: calc(var(--header-h) + 130px);
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    width: auto;
+    max-width: none;
+    max-height: calc(100dvh - var(--header-h) - 138px);
+    border-radius: var(--radius) var(--radius) 0 0;
+    transform: translateY(102%);
+  }
+  body.globe-page .exhibit-panel.open { transform: translateY(0); }
 }
 
 @media (prefers-reduced-motion: reduce) {

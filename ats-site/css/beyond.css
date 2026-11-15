@@ -33,6 +33,7 @@
 }
 .fleet-filterbar .status-filters { flex: 1 1 320px; }
 .fleet-filterbar .filter-count { flex: none; }
+.fleet-filterbar .filter-btn { padding: 6px 9px; font-size: 8px; }
 
 /* ---------- Fleet cards ---------- */
 .fleet-grid {
@@ -193,4 +194,6 @@
   .fleet-grid { grid-template-columns: 1fr; }
   .dist-panel { padding: 24px 20px; }
   .dist-diagram .d-value { font-size: 24px; }
+  .fleet-filterbar { gap: 8px; padding: 10px 12px; }
+  .fleet-filterbar .status-filters { flex-basis: 100%; }
 }

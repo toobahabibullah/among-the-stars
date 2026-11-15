@@ -38,6 +38,7 @@
     panelOpen: false,
     current: null,
     currentSite: null,
+    lastPointClickAt: 0,
     globe: null,
     webgl: true
   };
@@ -48,7 +49,8 @@
       "legend", "legend-mobile", "sidebar-count", "sidebar-world", "texture-note",
       "btn-reset", "btn-pause", "pause-label", "pause-icon", "webgl-fallback",
       "fb-grid", "fb-world", "beyond-link", "filters-desktop", "filters-mobile",
-      "filter-count-mobile", "artifact-search", "artifact-search-mobile"
+      "filter-count-mobile", "artifact-search", "artifact-search-mobile",
+      "mobile-drawer-toggle", "mobile-drawer-count", "mobile-drawer-content"
     ].forEach(function (id) { el[id] = document.getElementById(id); });
     el.segButtons = Array.prototype.slice.call(document.querySelectorAll(".seg-toggle button"));
   }
@@ -130,6 +132,7 @@
   var fade = { active: false, start: 0, dur: 750 };
   var mapPending = false;
   var dotRadius = 0.36;
+  var pointShapeResolutions = {};
 
   function findSpinGroup() {
     if (!state.globe) return null;
@@ -344,8 +347,8 @@
     pollSetup(0);
   }
 
-  /* Dots: a little larger zoomed out, smaller zoomed in; always clickable. */
-  function computeDotRadius(alt) { return Math.max(0.2, Math.min(0.55, 0.18 + alt * 0.07)); }
+  /* Keep each site large enough to see and hit; markers scale gently with zoom. */
+  function computeDotRadius(alt) { return Math.max(0.7, Math.min(1.3, 0.7 + alt * 0.16)); }
   var dotTimer = null;
   function scheduleDotSize(alt) {
     window.clearTimeout(dotTimer);
@@ -359,6 +362,10 @@
   function updatePoints() {
     if (!state.globe) return;
     var data = siteDots();
+    pointShapeResolutions = {};
+    data.forEach(function (d) {
+      pointShapeResolutions[d.lat + "," + d.lon] = S.shapeResolution(S.shapeOf(d.a.status));
+    });
     state.globe
       .pointsData(data)
       .pointLat(function (d) { return d.lat; })
@@ -366,43 +373,66 @@
       .pointColor(function (d) { return S.colourOf(d.a.status); })
       .pointAltitude(0.012)
       .pointRadius(dotRadius)
-      .pointResolution(function (d) { return S.shapeResolution(S.shapeOf(d.a.status)); })
+      .pointResolution(24)
       .pointsTransitionDuration(0)
-      .pointLabel(function (d) {
-        return '<span class="tt-name">' + esc(d.a.name) + '</span>' +
-          (D.present(d.s.label) ? '<span class="tt-type">' + esc(d.s.label) + '</span>' : "") +
-          '<span class="tt-type">' + esc(D.present(d.a.type) ? d.a.type : "") + '</span>' +
-          '<span class="tt-badge">' + S.badgeHtml(d.a.status) + "</span>";
+      .pointLabel(function (d) { return '<span class="tt-name">' + esc(d.a.name) + "</span>"; })
+      .onPointClick(function (d) {
+        state.lastPointClickAt = performance.now();
+        openArtifact(d.a, null, d.s);
       })
-      .onPointClick(function (d) { openArtifact(d.a, null, d.s); });
+      .onGlobeClick(function () {
+        if (performance.now() - state.lastPointClickAt < 160) return;
+        if (window.Exhibit.isOpen()) window.Exhibit.close();
+      });
+    updateRings();
   }
 
-  /* Markers are self-lit so they read on the bright AND dark side without losing
-     their status colour. globe.gl owns .color; we mirror it into .emissive. */
+  function updateRings() {
+    if (!state.globe) return;
+    if (reduceMotion) { state.globe.ringsData([]); return; }
+    var data = siteDots().map(function (d) {
+      d.selected = !!(state.currentSite && state.currentSite.lat === d.lat && state.currentSite.lon === d.lon);
+      return d;
+    });
+    state.globe
+      .ringsData(data)
+      .ringLat(function (d) { return d.lat; })
+      .ringLng(function (d) { return d.lon; })
+      .ringColor(function (d) { return hexRgba(d.selected ? "#3DE0FF" : S.colourOf(d.a.status), d.selected ? 0.7 : 0.5); })
+      .ringMaxRadius(function (d) { return d.selected ? 2 : 0.85; })
+      .ringPropagationSpeed(1.1)
+      .ringRepeatPeriod(2000);
+  }
+
+  /* Match the marker's polygon geometry to its status shape and keep its colour
+     emissive so it remains visible on both the day and night sides. */
   function restylePoints() {
     if (!spin.group) return;
     spin.group.traverse(function (o) {
       if (o.isMesh && o.geometry && o.geometry.type === "CylinderGeometry" &&
           o.material && o.material.emissive) {
+        var target = o.__currentTargetD;
+        var resolution = target && pointShapeResolutions[target.lat + "," + target.lng] || 24;
+        if (o.__atsPointResolution !== resolution) {
+          var Geometry = o.geometry.constructor;
+          var Matrix = o.matrix.constructor;
+          var geometry = new Geometry(1, 1, 1, resolution);
+          geometry.applyMatrix4(new Matrix().makeRotationX(Math.PI / 2));
+          geometry.applyMatrix4(new Matrix().makeTranslation(0, 0, -0.5));
+          if (o.__atsOwnGeometry) o.geometry.dispose();
+          o.geometry = geometry;
+          o.__atsOwnGeometry = true;
+          o.__atsPointResolution = resolution;
+        }
         o.material.emissive.copy(o.material.color);
-        o.material.emissiveIntensity = 0.7;
+        o.material.emissiveIntensity = 1.15;
       }
     });
   }
 
-  /* A thin soft ring pulses slowly (2 s) on the selected site only. */
+  /* A status-coloured pulse surrounds each site; the selected site uses cyan. */
   function updateSelectionRing() {
-    if (!state.globe) return;
-    var a = state.current, s = state.currentSite;
-    if (!a || !s || !D.siteLocated(s) || reduceMotion) { state.globe.ringsData([]); return; }
-    state.globe
-      .ringsData([s])
-      .ringLat(function (d) { return d.lat; })
-      .ringLng(function (d) { return d.lon; })
-      .ringColor(function () { return hexRgba("#3DE0FF", 0.55); })
-      .ringMaxRadius(1.8)
-      .ringPropagationSpeed(1.1)
-      .ringRepeatPeriod(2000);
+    updateRings();
   }
 
   function flyTo(pov, ms) { if (state.globe) state.globe.pointOfView(pov, reduceMotion ? 0 : ms); }
@@ -422,6 +452,7 @@
     var text = "Showing " + shown + " of " + total;
     if (el["sidebar-count"]) el["sidebar-count"].textContent = text;
     if (el["filter-count-mobile"]) el["filter-count-mobile"].textContent = text;
+    if (el["mobile-drawer-count"]) el["mobile-drawer-count"].textContent = text;
   }
 
   function renderLists() {
@@ -734,6 +765,15 @@
       setRotation();
     });
 
+    if (el["mobile-drawer-toggle"] && el["mobile-drawer-content"]) {
+      el["mobile-drawer-toggle"].addEventListener("click", function () {
+        var expanded = el["mobile-drawer-toggle"].getAttribute("aria-expanded") !== "true";
+        el["mobile-drawer-toggle"].setAttribute("aria-expanded", expanded ? "true" : "false");
+        el["mobile-drawer-content"].hidden = !expanded;
+        document.querySelector(".globe-mobilebar").classList.toggle("is-open", expanded);
+      });
+    }
+
     var resizeTimer = null;
     window.addEventListener("resize", function () {
       window.clearTimeout(resizeTimer);
@@ -832,6 +872,7 @@
   }
 
   function boot() {
+    document.body.classList.add("globe-page");
     cacheEls();
     wireControls();
     wireSearch();
